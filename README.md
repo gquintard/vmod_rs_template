@@ -16,7 +16,7 @@ cargo build --release
 cargo test --release
 ```
 
-The vmod file will be found at `target/release/libvmod_*.so`.
+The vmod file will be found at `target/release/libvmod_rs_template.so`.
 
 ## Making it your own
 
