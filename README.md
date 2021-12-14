@@ -7,7 +7,7 @@ This repo is a quick snapshot of https://github.com/gquintard/varnish-rs/tree/ma
 You'll need:
 - `cargo` (and the accompanying `rust` package)
 - `python3`
-- the `varnish` 7.0.1 (https://github.com/gquintard/varnish-rs#versions) development libraries/headers
+- the `varnish` 7.0.1 development libraries/headers ([depends on the `varnish` crate you are using](https://github.com/gquintard/varnish-rs#versions))
 
 ## Build and test
 
