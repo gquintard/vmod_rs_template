@@ -1,6 +1,6 @@
 # Maintainer: Guillaume Quintard <guillaume.quintard@gmail.com>
 
-pkgname=vmod_@VMOD_NAME@
+pkgname=vmod_rs_template
 pkgver=@VMOD_VERSION@
 pkgrel=1
 pkgdesc="A bundle of commonly useful Varnish vmods"
