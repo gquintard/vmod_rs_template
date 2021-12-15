@@ -23,7 +23,7 @@ The vmod file will be found at `target/release/libvmod_rs_template.so`.
 Rename the vmod:
 
 ``` bash
-rg rs_template -l | xargs sed -i 's/rs_template/new_name/g'
+git grep -l rs_template | xargs sed -i 's/rs_template/new_name/g'
 ```
 
 ## Packages
