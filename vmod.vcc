@@ -8,7 +8,7 @@
 # for more information, check https://varnish-cache.org/docs/trunk/reference/vmod.html
 $Module rs_template 3 "An rs_template vmod"
 
-# this describes our function prototypse, and we can add some explanation about it underneath
+# this describes our function prototype, and we can add some explanation about it underneath
 $Function BOOL is_even(INT)
 
 This will tell you if a number is even, isn't that odd?
