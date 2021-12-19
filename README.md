@@ -36,7 +36,11 @@ To avoid making a mess of your system, you probably should install your vmod as 
 # if you have `jq` installed, we can retrieve the vmod version from `Cargo.toml`
 VMOD_VERSION=$(cargo metadata --no-deps --format-version 1 | jq '.packages[0].version' -r)
 # this depends on the `varnish` crate version we depend on (https://github.com/gquintard/varnish-rs#versions)
-VARNISH_VERSION=7.0.1
+VARNISH_MINOR=$(cargo metadata --format-version 1 | jq -r '.packages[] | select(.name == "varnish-sys") | .metadata.libvarnishapi.version ')
+# arch needs to be told the precise version, so we also need the patch number
+VARNISH_PATCH=0
+
+VARNISH_VERSION="$VARNISH_MINOR.$VARNISH_PATCH"
 
 # create a tarball from the last commit
 git archive --output=vmod_rs_template-$VMOD_VERSION.tar.gz --format=tar.gz HEAD
@@ -44,7 +48,7 @@ git archive --output=vmod_rs_template-$VMOD_VERSION.tar.gz --format=tar.gz HEAD
 # create a work directory, and add the tarball, and the PKGBUILD with some variable substituted
 mkdir build
 mv vmod_rs_template-$VMOD_VERSION.tar.gz build
-sed -e 's/@VMOD_VERSION@/0.0.1/' -e 's/@VARNISH_VERSION@/7.0.1/' pkg/arch/PKGBUILD > build/PKGBUILD
+sed -e "s/@VMOD_VERSION@/$VMOD_VERSION/" -e "s/@VARNISH_VERSION@/$VARNISH_VERSION/" pkg/arch/PKGBUILD > build/PKGBUILD
 
 # build!
 cd build
