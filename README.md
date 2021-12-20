@@ -30,29 +30,66 @@ git grep -l rs_template | xargs sed -i 's/rs_template/new_name/g'
 
 To avoid making a mess of your system, you probably should install your vmod as a proper package. This repository also offers different templates, and some quick recipes for different distributions.
 
+### All platforms
+
+First it's necessary to set the `VMOD_VERSION` (the version of this vmod) and `VARNISH_VERSION` (the Varnish version to build against) environment variables. It can be done manually, or using `cargo` and `jq`:
+``` bash
+VMOD_VERSION=$(cargo metadata --no-deps --format-version 1 | jq '.packages[0].version' -r)
+VARNISH_MINOR=$(cargo metadata --format-version 1 | jq -r '.packages[] | select(.name == "varnish-sys") | .metadata.libvarnishapi.version ')
+VARNISH_PATCH=0
+VARNISH_VERSION="$VARNISH_MINOR.$VARNISH_PATCH"
+
+# or
+VMOD_VERSION=0.0.1
+VARNISH_VERSION=7.0.0
+```
+
+Then create the dist tarball, for example using `git archive`:
+
+``` bash
+git archive --output=vmod_rs_template-$VMOD_VERSION.tar.gz --format=tar.gz HEAD
+```
+
+Then, follow distribution-specific instructions.
+
 ### Arch
 
 ``` bash
-# if you have `jq` installed, we can retrieve the vmod version from `Cargo.toml`
-VMOD_VERSION=$(cargo metadata --no-deps --format-version 1 | jq '.packages[0].version' -r)
-# this depends on the `varnish` crate version we depend on (https://github.com/gquintard/varnish-rs#versions)
-VARNISH_MINOR=$(cargo metadata --format-version 1 | jq -r '.packages[] | select(.name == "varnish-sys") | .metadata.libvarnishapi.version ')
-# arch needs to be told the precise version, so we also need the patch number
-VARNISH_PATCH=0
-
-VARNISH_VERSION="$VARNISH_MINOR.$VARNISH_PATCH"
-
-# create a tarball from the last commit
-git archive --output=vmod_rs_template-$VMOD_VERSION.tar.gz --format=tar.gz HEAD
-
-# create a work directory, and add the tarball, and the PKGBUILD with some variable substituted
+# create a work directory
 mkdir build
-mv vmod_rs_template-$VMOD_VERSION.tar.gz build
+# copy the tarball and PKGBUIL file, substituing the variables we care about
+cp vmod_rs_template-$VMOD_VERSION.tar.gz build
 sed -e "s/@VMOD_VERSION@/$VMOD_VERSION/" -e "s/@VARNISH_VERSION@/$VARNISH_VERSION/" pkg/arch/PKGBUILD > build/PKGBUILD
 
-# build!
+# build
 cd build
 makepkg -rsf
+```
 
-# your package will be the file with the `.pkg.tar.zst` extension in `build/`
+Your package will be the file with the `.pkg.tar.zst` extension in `build/`
+
+### Alpine
+
+Alpine needs a bit of setup on the first time, but the [documentation](https://wiki.alpinelinux.org/wiki/Creating_an_Alpine_package) is excellent.
+
+``` bash
+# install some packages, create a user, give it power and a key
+apk add -q --no-progress --update tar alpine-sdk sudo
+adduser -D builder
+echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers
+addgroup builder abuild
+su builder -c "abuild-keygen -nai"
+```
+
+Then, to actually build your package:
+
+``` bash
+# create a work directory
+mkdir build
+# copy the tarball and PKGBUIL file, substituing the variables we care about
+cp vmod_rs_template-$VMOD_VERSION.tar.gz build
+sed -e "s/@VMOD_VERSION@/$VMOD_VERSION/" -e "s/@VARNISH_VERSION@/$VARNISH_VERSION/" pkg/arch/APKBUILD > build/APKBUILD
+
+su builder -c "abuild checksum"
+su builder -c "abuild -r"
 ```
