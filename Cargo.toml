@@ -4,8 +4,7 @@ version = "0.0.1"
 edition = "2021"
 
 [dependencies]
-varnish = "0.1.0"
-varnish-macros = "0.1.0"
+varnish = "0.5.1"
 
 [lib]
 crate-type = ["cdylib"]
