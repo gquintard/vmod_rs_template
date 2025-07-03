@@ -2,7 +2,7 @@ use varnish::run_vtc_tests;
 run_vtc_tests!("tests/*.vtc");
 
 #[varnish::vmod(docs = "API.md")]
-mod rs_template {
+mod rs_example {
     ///This will tell you if a number is even, isn't that odd?
     pub fn is_even(
         /// the number to test
@@ -31,18 +31,18 @@ mod rs_template {
 fn obviousness() {
     assert_eq!(
         "I was called without an argument",
-        rs_template::captain_obvious(None)
+        rs_example::captain_obvious(None)
     );
     assert_eq!(
         "I was given 975322 as argument",
-        rs_template::captain_obvious(Some(975322))
+        rs_example::captain_obvious(Some(975322))
     );
 }
 
 // Write some more unit tests
 #[test]
 fn even_test() {
-    assert_eq!(true, rs_template::is_even(0));
-    assert_eq!(true, rs_template::is_even(1024));
-    assert_eq!(false, rs_template::is_even(421321));
+    assert_eq!(true, rs_example::is_even(0));
+    assert_eq!(true, rs_example::is_even(1024));
+    assert_eq!(false, rs_example::is_even(421321));
 }

@@ -19,17 +19,17 @@ server s1 {
 
 # set up the varnish server with our custom logic
 varnish v1 -vcl+backend {
-	import rs_template from "${vmod}";
+	import rs_example from "${vmod}";
 
 	sub vcl_recv {
 		# modify the request here and the changes will be carried on
 		# to the backend
 		if (req.url == "/first") {
-			set req.http.even = rs_template.is_even(8);
-			set req.http.cap = rs_template.captain_obvious(17);
+			set req.http.even = rs_example.is_even(8);
+			set req.http.cap = rs_example.captain_obvious(17);
 		} else {
-			set req.http.even = rs_template.is_even(3);
-			set req.http.cap = rs_template.captain_obvious();
+			set req.http.even = rs_example.is_even(3);
+			set req.http.cap = rs_example.captain_obvious();
 		}
 	}
 } -start
